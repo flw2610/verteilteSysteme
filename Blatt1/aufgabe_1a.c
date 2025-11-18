@@ -10,7 +10,6 @@ int main(){
       perror("hier ist ein fehler passiert");
       exit(1);
     }
-  else printf("vater(pid: %d) hat kind(pid: %d) erzeugt in loop(i: %d)\n",getpid(),res, i);
   }
   
   return 0;
