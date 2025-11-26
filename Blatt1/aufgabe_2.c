@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <sys/sem.h>
+#include <sys/ipc.h>
 
 int main(){
 
@@ -21,7 +23,21 @@ int main(){
   return 0;
 }
 
+void P(int semid){
+  struct sembuf p ={0, -1, 0};
+  semop(semid,&p,1);
+}
+
+void V(int semid){
+  struct sembuf v={0, 1, 0};
+  semop(semid, &v, 1);
+}
+
 int kritischerBereich(){
+  key_t key = ftok("semfile",'A');
+  int semid = semget(key, 1, 0666);
+
+  P(semid);
   printf("Prozess %d betritt kritischen Bereich\n",getpid());
   fflush(stdout);
 
@@ -29,6 +45,7 @@ int kritischerBereich(){
 
   printf("Prozess %d verlässt kritischen Bereich\n",getpid());
   fflush(stdout);
+  V(semid);
 }
 
 int nichtKritischerBereich(){
